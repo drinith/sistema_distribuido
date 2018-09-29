@@ -3,6 +3,9 @@ import time
 
 def on_message(client, userdata, message):
     print("recebido " ,str(message.payload.decode("utf-8")))
+
+    if str(message.payload.decode("utf-8"))=="1":
+        print "Chegou aqui"
     print("message topic=",message.topic)
     print("message qos=",message.qos)
     print("message retain flag=",message.retain)

@@ -1,25 +1,38 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import serial # if you have not already done so
 import paho.mqtt.client as mqtt
+import time
 
-# The callback for when the client receives a CONNACK response from the server.
-def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+ str(rc))
 
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
-    client.subscribe("$SYS/#")
+broker = "127.0.0.1"
+contexto = "b"
 
-# The callback for when a PUBLISH message is received from the server.
-def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+arduino = serial.Serial("COM9",9600)
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
 
-client.connect("127.0.0.1", 1883, 60)
+def on_message_bytes(mosq, obj, msg):
+    # This callback will only be called for messages with topics that match
+    # $SYS/broker/bytes/#
+    print("Mensagem: " + str(msg.payload))
+    if str(msg.payload)=="1":
+        print ("The LED is on...")
+        time.sleep(1) 
+        arduino.write('H') 
+        onOffFunction()
+        
+    
+    
 
-# Blocking call that processes network traffic, dispatches callbacks and
-# handles reconnecting.
-# Other loop*() functions are available that give a threaded interface and a
-# manual interface.
-client.loop_forever()
+mqttc = mqtt.Client()
+
+#Chamada do callback para retornar a mensagem 
+mqttc.message_callback_add(contexto, on_message_bytes)
+
+mqttc.connect(broker, 1883, 60)
+
+#Incrição no contexto que será onbservado
+mqttc.subscribe(contexto, 0)
+
+mqttc.loop_forever()
