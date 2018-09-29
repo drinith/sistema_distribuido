@@ -12,9 +12,11 @@ void loop() {
         char serialListener = Serial.read();
         if (serialListener == 'H') {
             digitalWrite(LED, HIGH);
+            Serial.print("Ligou");
         }
         else if (serialListener == 'L') {
             digitalWrite(LED, LOW);
+            Serial.print("Desligou");
         }
     }
 }

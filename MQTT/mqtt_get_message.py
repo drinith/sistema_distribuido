@@ -20,7 +20,12 @@ def on_message_bytes(mosq, obj, msg):
         print ("The LED is on...")
         time.sleep(1) 
         arduino.write('H') 
-        onOffFunction()
+        
+    if str(msg.payload)=="0":
+        print ("The LED is Off...")
+        time.sleep(1) 
+        arduino.write('L') 
+        
         
     
     
